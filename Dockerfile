@@ -1,9 +1,7 @@
-FROM golang:1.6
-LABEL maintainer christoffer.kylvag@bonniernews.se
+FROM alpine:latest
 EXPOSE 9198
-RUN go get -u github.com/kardianos/govendor && \
-        go get -u github.com/DagensNyheter/logstash_exporter && \
-        cd $GOPATH/src/github.com/DagensNyheter/logstash_exporter && \
-        govendor build +local && \
-        mv /go/bin/logstash_exporter /
-ENTRYPOINT ["/logstash_exporter"]  
+COPY logstash_exporter /
+RUN apk add --no-cache tini
+# Tini is now available at /sbin/tini
+ENTRYPOINT ["/sbin/tini", "--", "/logstash_exporter"]
+
